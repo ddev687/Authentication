@@ -16,10 +16,12 @@ app.post('/users',(req,res)=>{
 		email:req.body.email,
 		password:req.body.password
 	});
-	newUser.save().then((doc)=>{
-		res.send(doc);
-	},(e)=>{
-		res.send(e);
+	newUser.save().then(()=>{
+		return newUser.generateAuthToken();
+	}).then((token)=>{
+		res.header('x-auth',token).send(newUser);
+	}).catch((e)=>{
+		res.status(200).send(e);
 	});
 });
 
